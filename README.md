@@ -1,0 +1,1 @@
+# obsidian_zettelkasten_using_guide
