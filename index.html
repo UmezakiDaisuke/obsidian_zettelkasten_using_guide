@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian & Cursor 活用インタラクティブガイド</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: A single-page application with a fixed top navigation bar. The structure is thematic, not linear, divided into: 1. Introduction, 2. Obsidian & Zettelkasten, 3. Cursor AI, 4. Synergy, 5. Roadmap. This user-centric structure allows non-linear exploration of the core concepts, comparing tools, and understanding their integration, which is more effective for learning than a linear report. Key interactions include tabbed content for features, an interactive diagram for workflows, and collapsible sections for detailed information, minimizing cognitive load and guiding the user through the complex information. -->
+    <!-- Visualization & Content Choices: 
+        - Zettelkasten Workflow: Goal: Organize/Change. Viz: HTML/CSS interactive flow diagram. Interaction: Click to reveal details of each step. Justification: Visually represents the process better than text, interaction prevents information overload. Library: None (HTML/CSS/JS).
+        - Cursor vs. Copilot: Goal: Compare. Viz: Donut Chart (Chart.js) and an interactive HTML table. Interaction: Chart provides a high-level visual summary; table rows highlight on hover for detailed comparison. Justification: Combines a quick visual takeaway with in-depth data exploration. Library: Chart.js.
+        - Recommended Plugins: Goal: Inform/Organize. Viz: Interactive HTML cards. Interaction: User can see details for each plugin. Justification: Allows users to quickly understand plugins relevant to their needs from a long list. Library: None (JS).
+        - Integration Use Cases: Goal: Inform/Relate. Viz: Interactive cards in a grid. Interaction: Clicking a card reveals a detailed view of the specific Obsidian + Cursor workflow. Justification: Breaks down complex scenarios into manageable, on-demand chunks. Library: None (JS).
+        - Roadmap: Goal: Organize/Change. Viz: Visual stepper component. Interaction: View steps sequentially. Justification: Presents a clear, actionable path for users. Library: None (HTML/CSS/JS). -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', 'Noto Sans JP', sans-serif; }
+        .chart-container { position: relative; width: 100%; max-width: 400px; margin-left: auto; margin-right: auto; height: 320px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+        .nav-link { transition: color 0.3s ease, border-bottom-color 0.3s ease; }
+        .nav-link.active { color: #0284c7; border-bottom-color: #0284c7; }
+        .nav-link:not(.active) { border-bottom-color: transparent; }
+        .tab-button.active { background-color: #0369a1; color: white; }
+        .tab-button { transition: background-color 0.3s, color 0.3s; }
+        .collapsible-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease-in-out; }
+    </style>
+</head>
+<body class="bg-stone-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl text-sky-700">🚀</span>
+                    <h1 class="ml-2 font-bold text-lg hidden sm:block">知識管理 & 生産性ガイド</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#intro" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2">はじめに</a>
+                        <a href="#obsidian" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2">Obsidian編</a>
+                        <a href="#cursor" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2">Cursor編</a>
+                        <a href="#synergy" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2">連携編</a>
+                        <a href="#roadmap" class="nav-link px-3 py-2 rounded-md text-sm font-medium border-b-2">実践ロードマップ</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="intro" class="py-20 md:py-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                    思考を繋げ、<span class="text-sky-600">生産性を加速する</span>
+                </h2>
+                <p class="mt-6 max-w-3xl mx-auto text-lg text-slate-600">
+                    このガイドは、ObsidianによるツェッテルカステンとCursor AIを組み合わせ、あなたの知識管理と開発ワークフローを革新するためのインタラクティブなリソースです。情報過多の時代を乗りこなし、アイデアを価値あるアウトプットに変えましょう。
+                </p>
+                <div class="mt-10 flex justify-center gap-4">
+                    <a href="#obsidian" class="bg-slate-900 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-slate-700 transition-colors">Obsidianで思考を整理する 🧠</a>
+                    <a href="#cursor" class="bg-sky-600 text-white px-6 py-3 rounded-lg font-semibold shadow-md hover:bg-sky-500 transition-colors">Cursorで開発を加速する ⚡️</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="obsidian" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Obsidian編：知識のネットワークを築く</h2>
+                    <p class="mt-4 text-lg text-slate-600">ツェッテルカステンは単なるメモ術ではありません。「思考を回す仕組み」です。Obsidianがなぜその最適な実践ツールなのか、その核心に迫ります。</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6 text-slate-800">ツェッテルカステン・ワークフロー</h3>
+                        <div id="zettelkasten-workflow" class="space-y-4">
+                            <div class="workflow-step cursor-pointer p-4 border-2 border-slate-200 rounded-lg hover:border-sky-500 hover:bg-sky-50 transition-all" data-step="1">
+                                <h4 class="font-bold text-lg">1. 走り書きメモ (Fleeting Notes)</h4>
+                                <p class="text-sm text-slate-500">ひらめきを素早くキャプチャ</p>
+                                <div class="collapsible-content mt-2 text-slate-600">
+                                    <p>日常生活で思いついたアイデアや気付きを、デイリーノートやQuickAddプラグインを使い、思考の流れを止めずに素早く記録します。これは「脳のダンプ」として機能します。</p>
+                                </div>
+                            </div>
+                            <div class="text-center text-sky-500 text-2xl font-bold">↓</div>
+                             <div class="workflow-step cursor-pointer p-4 border-2 border-slate-200 rounded-lg hover:border-sky-500 hover:bg-sky-50 transition-all" data-step="2">
+                                <h4 class="font-bold text-lg">2. 文献メモ (Literature Notes)</h4>
+                                <p class="text-sm text-slate-500">情報を自分の言葉で要約</p>
+                                <div class="collapsible-content mt-2 text-slate-600">
+                                    <p>読書などから得た内容を自分の言葉で記録します。情報源をタグ付けし、Templaterでメタデータを付与すると後の参照が容易になります。</p>
+                                </div>
+                            </div>
+                            <div class="text-center text-sky-500 text-2xl font-bold">↓</div>
+                            <div class="workflow-step cursor-pointer p-4 border-2 border-slate-200 rounded-lg hover:border-sky-500 hover:bg-sky-50 transition-all" data-step="3">
+                                <h4 class="font-bold text-lg">3. 永久保存版メモ (Permanent Notes)</h4>
+                                <p class="text-sm text-slate-500">アイデアを再利用可能な形で結晶化</p>
+                                <div class="collapsible-content mt-2 text-slate-600">
+                                    <p>走り書きや文献メモを元に、最小単位のアイデアを「自分の言葉で」書き出します。既存のメモとリンクさせ、知識のネットワークを育てます。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6 text-slate-800">なぜObsidianなのか？</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-slate-100 rounded-lg">
+                                <h4 class="font-bold text-lg">🔗 強力なリンクとグラフビュー</h4>
+                                <p class="text-slate-600">ノート間のつながりを直感的に作成・可視化し、新たな発見を促します。</p>
+                            </div>
+                            <div class="p-4 bg-slate-100 rounded-lg">
+                                <h4 class="font-bold text-lg">📁 ローカル・Markdownベース</h4>
+                                <p class="text-slate-600">データはあなたのもの。特定のサービスに縛られず、長期的な資産として知識を蓄積できます。</p>
+                            </div>
+                             <div class="p-4 bg-slate-100 rounded-lg">
+                                <h4 class="font-bold text-lg">🧩 豊富なプラグイン</h4>
+                                <p class="text-slate-600">ワークフローを自由に拡張・最適化し、あなただけの「第二の脳」を構築できます。</p>
+                            </div>
+                        </div>
+                        <div class="mt-8 p-4 border-l-4 border-sky-500 bg-sky-50 rounded-r-lg">
+                            <h4 class="font-bold text-lg">MOC (Map of Contents)</h4>
+                            <p class="text-slate-700">関連するノートをまとめる「地図」のようなノート。思考を整理し、新たなアイデアの創出を助けます。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-2xl font-semibold mb-6 text-center text-slate-800">推奨プラグイン</h3>
+                    <div id="plugin-cards" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="cursor" class="py-20">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">Cursor編：AIと共に開発を加速する</h2>
+                    <p class="mt-4 text-lg text-slate-600">CursorはVSCodeをベースとしたAIコードエディタ。開発のあらゆる場面で、AIがあなたの思考を拡張し、生産性を劇的に向上させます。</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6 text-slate-800">主要機能インタラクティブデモ</h3>
+                        <div class="bg-white p-4 rounded-lg shadow-md">
+                            <div class="flex border-b border-slate-200">
+                                <button class="tab-button flex-1 py-2 px-4 text-sm font-semibold text-slate-600 active" data-tab="chat">AIチャット</button>
+                                <button class="tab-button flex-1 py-2 px-4 text-sm font-semibold text-slate-600" data-tab="debug">デバッグ支援</button>
+                                <button class="tab-button flex-1 py-2 px-4 text-sm font-semibold text-slate-600" data-tab="context">@参照</button>
+                            </div>
+                            <div id="tab-content" class="p-4 min-h-[200px]">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-6 text-slate-800">Cursor vs GitHub Copilot</h3>
+                        <p class="text-slate-600 mb-4">Cursorは単なるコード補完ツールを超え、AIとの対話を中心に設計されたIDE代替です。その違いを視覚的に見てみましょう。</p>
+                        <div class="chart-container">
+                            <canvas id="comparisonChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="synergy" class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold tracking-tight text-slate-900">連携編：知識と生産性の融合</h2>
+                    <p class="mt-4 text-lg text-slate-600">Obsidianで築いた知識ベースとCursorのAIパワーが融合する時、あなたのワークフローは新たな次元へ。具体的な連携事例をご覧ください。</p>
+                </div>
+
+                <div id="synergy-cards" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                </div>
+            </div>
+        </section>
+
+        <section id="roadmap" class="py-20 bg-slate-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-bold tracking-tight">実践ロードマップ</h2>
+                    <p class="mt-4 text-lg text-slate-300">さあ、始めましょう。以下のステップで、あなたも知識管理と生産性向上の旅へ。</p>
+                </div>
+                <div class="relative">
+                    <div class="absolute left-1/2 -translate-x-1/2 w-0.5 h-full bg-sky-700/50 hidden md:block"></div>
+                    <div class="space-y-12">
+                        <div class="md:flex items-center w-full">
+                            <div class="md:w-1/2"></div>
+                            <div class="z-10 flex items-center bg-sky-600 shadow-xl w-12 h-12 rounded-full justify-center mx-auto md:mx-0">
+                                <h1 class="text-white font-bold text-lg">1</h1>
+                            </div>
+                            <div class="md:w-1/2 md:pl-8">
+                                <div class="p-6 bg-slate-800 rounded-lg shadow-md mt-4 md:mt-0">
+                                    <h3 class="font-bold text-xl mb-2">Obsidianセットアップ</h3>
+                                    <p class="text-slate-300">Vaultを作成し、基本的なフォルダ構成を設定。クラウド同期でどこからでもアクセス可能に。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:flex items-center w-full">
+                            <div class="md:w-1/2 md:pr-8 text-right">
+                               <div class="p-6 bg-slate-800 rounded-lg shadow-md mt-4 md:mt-0">
+                                    <h3 class="font-bold text-xl mb-2">ツェッテルカステン導入</h3>
+                                    <p class="text-slate-300">デイリーノートから始め、文献メモ、永久保存版メモの作成とリンクに慣れていきます。</p>
+                                </div>
+                            </div>
+                            <div class="z-10 flex items-center bg-sky-600 shadow-xl w-12 h-12 rounded-full justify-center mx-auto md:mx-0">
+                                <h1 class="text-white font-bold text-lg">2</h1>
+                            </div>
+                            <div class="md:w-1/2"></div>
+                        </div>
+                        <div class="md:flex items-center w-full">
+                            <div class="md:w-1/2"></div>
+                            <div class="z-10 flex items-center bg-sky-600 shadow-xl w-12 h-12 rounded-full justify-center mx-auto md:mx-0">
+                                <h1 class="text-white font-bold text-lg">3</h1>
+                            </div>
+                            <div class="md:w-1/2 md:pl-8">
+                                <div class="p-6 bg-slate-800 rounded-lg shadow-md mt-4 md:mt-0">
+                                    <h3 class="font-bold text-xl mb-2">Cursor導入</h3>
+                                    <p class="text-slate-300">VSCode設定をインポートし、AIチャットやコード生成機能を試してみましょう。</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="md:flex items-center w-full">
+                            <div class="md:w-1/2 md:pr-8 text-right">
+                               <div class="p-6 bg-slate-800 rounded-lg shadow-md mt-4 md:mt-0">
+                                    <h3 class="font-bold text-xl mb-2">連携と実践</h3>
+                                    <p class="text-slate-300">CursorでObsidianのVaultを開き、ノートの要約やアイデア出しから連携を始めます。</p>
+                                </div>
+                            </div>
+                            <div class="z-10 flex items-center bg-sky-600 shadow-xl w-12 h-12 rounded-full justify-center mx-auto md:mx-0">
+                                <h1 class="text-white font-bold text-lg">4</h1>
+                            </div>
+                            <div class="md:w-1/2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-900 text-slate-400 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
+            <p>&copy; 2025 Interactive Guide. All rights reserved.</p>
+            <p class="mt-1">This application was generated based on a provided report.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const zettelkastenData = {
+                '1': { 
+                    title: '1. 走り書きメモ (Fleeting Notes)', 
+                    subtitle: 'ひらめきを素早くキャプチャ',
+                    content: '日常生活で思いついたアイデアや気付きを、デイリーノートやQuickAddプラグインを使い、思考の流れを止めずに素早く記録します。これは「脳のダンプ」として機能します。'
+                },
+                '2': { 
+                    title: '2. 文献メモ (Literature Notes)', 
+                    subtitle: '情報を自分の言葉で要約',
+                    content: '読書などから得た内容を自分の言葉で記録します。情報源をタグ付けし、Templaterでメタデータを付与すると後の参照が容易になります。'
+                },
+                '3': {
+                    title: '3. 永久保存版メモ (Permanent Notes)',
+                    subtitle: 'アイデアを再利用可能な形で結晶化',
+                    content: '走り書きや文献メモを元に、最小単位のアイデアを「自分の言葉で」書き出します。既存のメモとリンクさせ、知識のネットワークを育てます。'
+                }
+            };
+
+            const pluginData = [
+                { name: 'Templater', desc: 'ノートテンプレートを自動化し、一貫した構造を維持します。', icon: '📝' },
+                { name: 'QuickAdd', desc: 'アイデアやタスクをワンクリックで素早くキャプチャします。', icon: '⚡️' },
+                { name: 'Note ID', desc: 'ユニークIDでノートを管理し、思考のクラスターを特定します。', icon: '🆔' },
+                { name: 'AI Tagger Universe', desc: 'AIがノートに自動でタグを付け、整理を助けます。', icon: '🤖' },
+                { name: 'Hello Nemesis', desc: 'AIが批判的なフィードバックを提供し、思考を深めます。', icon: '🤔' },
+                { name: 'Dataview', desc: 'ノートのメタデータを使って動的なリストやテーブルを作成します。', icon: '📊' }
+            ];
+
+            const cursorTabData = {
+                chat: {
+                    title: 'AIとの対話でコードを生成・編集',
+                    content: '`Ctrl + K` でチャットを開き、「ユーザー認証機能を追加して」のように自然言語で指示するだけで、AIが必要なコードを生成・編集します。',
+                    code: `// "Create a login form component in React"\n\nfunction LoginForm() {\n  // ... AI generated code\n}`
+                },
+                debug: {
+                    title: 'エラーの原因特定と修正を瞬時に',
+                    content: 'エラーメッセージを選択してチャットに投げかけると、AIがコードベース全体を解析し、原因を特定して修正案を提示します。',
+                    code: `// "Why is this giving a null pointer?"\n\n// ... AI explanation and fix suggestion\n`
+                },
+                context: {
+                    title: 'ドキュメントやファイルを参照',
+                    content: '`@`シンボルで特定のファイルや公式ドキュメントURLを参照させ、より文脈に沿った正確な回答やコード生成を促します。',
+                    code: `// "@main.py please refactor this function"\n\n// ... AI refactors based on main.py context\n`
+                }
+            };
+            
+            const synergyData = [
+                {
+                    title: "ノートの要約と洗練",
+                    icon: "📜",
+                    content: "Obsidianに保存した長文の文献メモをCursorで開き、AIに要約や表現の洗練を依頼。効率的な知識の消化とノートの品質向上を実現します。"
+                },
+                {
+                    title: "アイデアの拡張",
+                    icon: "💡",
+                    content: "Obsidianの断片的なアイデアをCursorに渡し、「このアイデアを基にブレインストーミングして」と依頼。思考の壁を打ち破り、新たな視点を得られます。"
+                },
+                {
+                    title: "コードスニペット管理",
+                    icon: "💻",
+                    content: "Cursorで生成したコードをObsidianに保存・管理。Obsidianの知識ベースから必要なコードを素早く見つけ、Cursorで再利用するサイクルを構築します。"
+                },
+                {
+                    title: "テンプレート生成",
+                    icon: "📄",
+                    content: "「Obsidianのプロジェクト管理用テンプレートを作って」とCursorに依頼。一貫性のあるノート構造をAIの力で効率的に作成できます。"
+                },
+                {
+                    title: "知識ベース開発支援",
+                    icon: "🧠",
+                    content: "Obsidianに蓄積したプロジェクトの仕様や設計思想をCursorのAIに参照させ、より文脈に即した的確なコーディング支援を受けられます。"
+                },
+                {
+                    title: "AIによる自己批判",
+                    icon: "🧐",
+                    content: "Obsidianで書いた考察をCursorに渡し、「この議論の弱点は？」と問いかける。AIを思考のパートナーとして活用し、論理を強化します。"
+                }
+            ];
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('main section');
+
+            function updateActiveLink() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (pageYOffset >= sectionTop - 80) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', updateActiveLink);
+            updateActiveLink();
+
+            const workflowSteps = document.querySelectorAll('.workflow-step');
+            workflowSteps.forEach(step => {
+                step.addEventListener('click', () => {
+                    const contentDiv = step.querySelector('.collapsible-content');
+                    if (contentDiv.style.maxHeight) {
+                        contentDiv.style.maxHeight = null;
+                    } else {
+                        workflowSteps.forEach(s => s.querySelector('.collapsible-content').style.maxHeight = null);
+                        contentDiv.style.maxHeight = contentDiv.scrollHeight + "px";
+                    }
+                });
+            });
+
+            const pluginCardsContainer = document.getElementById('plugin-cards');
+            pluginData.forEach(plugin => {
+                const card = document.createElement('div');
+                card.className = 'bg-slate-50 p-6 rounded-lg shadow-sm border border-slate-200 hover:shadow-md hover:-translate-y-1 transition-all';
+                card.innerHTML = `
+                    <div class="text-3xl mb-3">${plugin.icon}</div>
+                    <h4 class="font-bold text-lg text-slate-800">${plugin.name}</h4>
+                    <p class="text-slate-600 mt-1">${plugin.desc}</p>
+                `;
+                pluginCardsContainer.appendChild(card);
+            });
+            
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContentEl = document.getElementById('tab-content');
+
+            function updateTabContent(tabId) {
+                 const data = cursorTabData[tabId];
+                 tabContentEl.innerHTML = `
+                    <h4 class="font-bold text-lg text-sky-700">${data.title}</h4>
+                    <p class="mt-2 text-slate-600">${data.content}</p>
+                    <div class="mt-4 p-3 bg-slate-800 text-white rounded-md text-sm font-mono overflow-x-auto">
+                        <pre><code>${data.code}</code></pre>
+                    </div>
+                 `;
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    updateTabContent(button.dataset.tab);
+                });
+            });
+            updateTabContent('chat');
+
+            const synergyCardsContainer = document.getElementById('synergy-cards');
+            synergyData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 border border-slate-200 p-6 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300 transition-all transform hover:-translate-y-1";
+                card.innerHTML = `
+                    <div class="text-4xl mb-4">${item.icon}</div>
+                    <h3 class="font-bold text-xl text-slate-800 mb-2">${item.title}</h3>
+                    <p class="text-slate-600">${item.content}</p>
+                `;
+                synergyCardsContainer.appendChild(card);
+            });
+
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['統合の深さ', 'AI機能の多様性', 'モデル選択の柔軟性'],
+                    datasets: [{
+                        label: 'Cursor',
+                        data: [90, 85, 95],
+                        backgroundColor: ['#0ea5e9', '#38bdf8', '#7dd3fc'],
+                        borderColor: '#fff',
+                        borderWidth: 3
+                    }, {
+                        label: 'GitHub Copilot',
+                        data: [75, 70, 60],
+                        backgroundColor: ['#475569', '#64748b', '#94a3b8'],
+                        borderColor: '#fff',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                             labels: {
+                                font: {
+                                    family: "'Inter', 'Noto Sans JP', sans-serif"
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '機能比較 (定性的評価)',
+                            font: {
+                                size: 16,
+                                family: "'Inter', 'Noto Sans JP', sans-serif"
+                            },
+                            padding: {
+                                top: 10,
+                                bottom: 20
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '点';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '40%'
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
